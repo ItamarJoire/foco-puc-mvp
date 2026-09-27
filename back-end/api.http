@@ -1,0 +1,80 @@
+### To-Do API — testes rápidos (extensão REST Client do VS Code)
+### Rode a API antes: F5 no VS Code, ou `python app.py`
+
+@baseUrl = http://127.0.0.1:5000
+@username = itamar
+@password = senha-forte-123
+
+### Saúde da API
+GET {{baseUrl}}/ping
+
+### Criar usuário
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "{{username}}",
+  "password": "{{password}}"
+}
+
+### Login (guarda o token na variável abaixo)
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "{{username}}",
+  "password": "{{password}}"
+}
+
+###
+@token = {{login.response.body.access_token}}
+
+### Listar tarefas
+GET {{baseUrl}}/tasks
+Authorization: Bearer {{token}}
+
+### Listar só as concluídas
+GET {{baseUrl}}/tasks?done=true
+Authorization: Bearer {{token}}
+
+### Criar tarefa
+POST {{baseUrl}}/tasks
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Estudar Flask",
+  "description": "Fechar o passo 5 do roteiro"
+}
+
+### Buscar tarefa por id
+GET {{baseUrl}}/tasks/1
+Authorization: Bearer {{token}}
+
+### Substituir a tarefa inteira (PUT)
+PUT {{baseUrl}}/tasks/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Estudar Flask com calma",
+  "description": "Revisar JWT",
+  "done": false
+}
+
+### Atualizar só um campo (PATCH)
+PATCH {{baseUrl}}/tasks/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "done": true
+}
+
+### Apagar tarefa
+DELETE {{baseUrl}}/tasks/1
+Authorization: Bearer {{token}}
+
+### Sem token — deve responder 401
+GET {{baseUrl}}/tasks
