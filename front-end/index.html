@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Foco — tarefas com prazo em dia</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ===================== CABEÇALHO ===================== -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">F</span>
+      <div>
+        <h1>Foco</h1>
+        <p>tarefas com prazo em dia</p>
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      <!-- Indicador alimentado pela rota GET /ping -->
+      <span id="api-status" class="api-status is-checking" title="Situação da API">
+        <span class="dot"></span><span id="api-status-text">verificando API…</span>
+      </span>
+      <button id="theme-toggle" class="icon-btn" type="button" title="Alternar tema">◐</button>
+      <div id="user-box" class="user-box" hidden>
+        <span id="user-name" class="user-name"></span>
+        <button id="logout-btn" class="ghost-btn" type="button">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===================== TELA DE ACESSO ===================== -->
+    <section id="view-auth" class="view view-auth">
+      <div class="auth-card">
+        <div class="tabs" role="tablist">
+          <button class="tab is-active" data-tab="login" role="tab" type="button">Entrar</button>
+          <button class="tab" data-tab="register" role="tab" type="button">Criar conta</button>
+        </div>
+
+        <form id="login-form" class="auth-form" data-panel="login" autocomplete="off">
+          <label for="login-username">Usuário</label>
+          <input id="login-username" name="username" type="text" required placeholder="seu usuário">
+
+          <label for="login-password">Senha</label>
+          <input id="login-password" name="password" type="password" required placeholder="mínimo 8 caracteres">
+
+          <button class="primary-btn" type="submit">Entrar</button>
+          <p class="form-hint">Autentica em <code>POST /auth/login</code> e guarda o token JWT.</p>
+        </form>
+
+        <form id="register-form" class="auth-form" data-panel="register" autocomplete="off" hidden>
+          <label for="register-username">Usuário</label>
+          <input id="register-username" name="username" type="text" required placeholder="escolha um usuário">
+
+          <label for="register-password">Senha</label>
+          <input id="register-password" name="password" type="password" required minlength="8" placeholder="mínimo 8 caracteres">
+
+          <button class="primary-btn" type="submit">Criar conta e entrar</button>
+          <p class="form-hint">Cria em <code>POST /auth/register</code> e já faz login em seguida.</p>
+        </form>
+      </div>
+
+      <aside class="auth-side">
+        <h2>Cada prazo no lugar certo</h2>
+        <p>
+          O Foco organiza suas tarefas pelo que realmente importa: o prazo.
+          Tudo que venceu e continua pendente aparece destacado, para você
+          decidir rápido o que atacar agora.
+        </p>
+        <ul class="feature-list">
+          <li>Suas tarefas são privadas: a API só devolve o que é seu.</li>
+          <li>Prazos com marcação automática de atraso.</li>
+          <li>Painel ao vivo com cada chamada feita à API.</li>
+        </ul>
+      </aside>
+    </section>
+
+    <!-- ===================== TELA PRINCIPAL ===================== -->
+    <section id="view-board" class="view view-board" hidden>
+      <div class="board-main">
+        <!-- Resumo -->
+        <div class="stats">
+          <article class="stat">
+            <span class="stat-value" id="stat-total">0</span>
+            <span class="stat-label">no total</span>
+          </article>
+          <article class="stat">
+            <span class="stat-value" id="stat-pending">0</span>
+            <span class="stat-label">pendentes</span>
+          </article>
+          <article class="stat">
+            <span class="stat-value" id="stat-done">0</span>
+            <span class="stat-label">concluídas</span>
+          </article>
+          <article class="stat is-alert">
+            <span class="stat-value" id="stat-overdue">0</span>
+            <span class="stat-label">atrasadas</span>
+          </article>
+        </div>
+
+        <!-- Nova tarefa -->
+        <form id="task-form" class="task-form" autocomplete="off">
+          <div class="task-form-row">
+            <input id="task-title" name="title" type="text" maxlength="200" required
+                   placeholder="O que precisa ser feito?">
+            <input id="task-due" name="due_date" type="date" title="Prazo (opcional)">
+            <button class="primary-btn" type="submit">Adicionar</button>
+          </div>
+          <input id="task-description" name="description" type="text"
+                 placeholder="Detalhe da tarefa (opcional)">
+        </form>
+
+        <!-- Filtros -->
+        <div class="filters" role="tablist">
+          <button class="filter is-active" data-filter="all" type="button">Todas</button>
+          <button class="filter" data-filter="pending" type="button">Pendentes</button>
+          <button class="filter" data-filter="done" type="button">Concluídas</button>
+          <button id="reload-btn" class="ghost-btn reload" type="button" title="Recarregar">↻</button>
+        </div>
+
+        <!-- Cards -->
+        <div id="task-list" class="task-grid" aria-live="polite"></div>
+
+        <div id="empty-state" class="empty-state" hidden>
+          <span class="empty-mark">◎</span>
+          <h3>Nada por aqui</h3>
+          <p>Crie sua primeira tarefa no campo acima.</p>
+        </div>
+      </div>
+
+      <!-- Painel de chamadas -->
+      <aside class="api-panel">
+        <div class="api-panel-head">
+          <h2>Chamadas à API</h2>
+          <button id="clear-log" class="ghost-btn" type="button">Limpar</button>
+        </div>
+        <p class="api-panel-hint">Cada ação da tela dispara uma rota. Acompanhe aqui:</p>
+        <ul id="api-log" class="api-log"></ul>
+      </aside>
+    </section>
+  </main>
+
+  <!-- ===================== MODAL DE DETALHE ===================== -->
+  <div id="modal" class="modal" hidden>
+    <div class="modal-backdrop" data-close="true"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <header class="modal-head">
+        <h2 id="modal-title">Detalhe da tarefa</h2>
+        <button class="icon-btn" type="button" data-close="true" title="Fechar">✕</button>
+      </header>
+
+      <form id="edit-form" class="modal-body" autocomplete="off">
+        <label for="edit-title">Título</label>
+        <input id="edit-title" name="title" type="text" maxlength="200" required>
+
+        <label for="edit-description">Descrição</label>
+        <textarea id="edit-description" name="description" rows="3"></textarea>
+
+        <div class="modal-row">
+          <div>
+            <label for="edit-due">Prazo</label>
+            <input id="edit-due" name="due_date" type="date">
+          </div>
+          <label class="checkbox">
+            <input id="edit-done" name="done" type="checkbox">
+            <span>Concluída</span>
+          </label>
+        </div>
+
+        <p class="modal-meta" id="modal-meta"></p>
+
+        <footer class="modal-foot">
+          <button type="button" id="delete-btn" class="danger-btn">Excluir</button>
+          <button type="submit" class="primary-btn">Salvar alterações</button>
+        </footer>
+      </form>
+    </div>
+  </div>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+
+  <!-- Scripts clássicos (sem módulos), para o index.html abrir direto do disco -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
