@@ -1,10 +1,10 @@
-# Foco — front-end do MVP
+# Foco | front-end do MVP
 
 Interface web do **Foco**, um organizador de tarefas que coloca o prazo no centro: o que venceu e continua pendente aparece destacado, para decidir rápido o que atacar primeiro.
 
-É uma **SPA (Single Page Application)** escrita em **HTML, CSS e JavaScript puros** — sem React, Vue, Angular ou qualquer framework de SPA, e sem framework de estilo. Toda a navegação acontece em uma única página, trocando as telas por JavaScript.
+É uma **SPA (Single Page Application)** escrita em **HTML, CSS e JavaScript puros**. Sem React, Vue, Angular ou qualquer framework de SPA, e sem framework de estilo. Toda a navegação acontece em uma única página, trocando as telas por JavaScript.
 
-O back-end fica em repositório separado: **[todo-api](https://github.com/SEU-USUARIO/todo-api)**.
+O back-end fica em repositório separado: **[back-end](https://github.com/ItamarJoire/foco-puc-mvp/tree/master/back-end)**.
 
 ## Funcionalidades
 
@@ -22,7 +22,7 @@ O back-end fica em repositório separado: **[todo-api](https://github.com/SEU-US
 ## Pré-requisitos
 
 - Um navegador atualizado (Chrome, Edge ou Firefox).
-- A API do projeto rodando em `http://127.0.0.1:5000` — veja o README do repositório `todo-api`.
+- A API do projeto rodando em `http://127.0.0.1:5000` — veja o README do repositório `back-end`.
 
 Não é necessário instalar nada, nem servidor local, nem extensão do navegador.
 
@@ -30,13 +30,13 @@ Não é necessário instalar nada, nem servidor local, nem extensão do navegado
 
 ```bash
 git clone <url-deste-repositorio>
-cd todo-web
+cd front-end
 ```
 
 1. Suba a API (no outro repositório):
 
    ```bash
-   cd ../todo-api
+   cd ../back-end
    .\.venv\Scripts\Activate.ps1   # Windows
    python app.py
    ```
@@ -61,7 +61,7 @@ var CONFIG = {
 ## Estrutura do projeto
 
 ```
-todo-web/
+front-end/
 ├── index.html          # estrutura da página e das telas
 ├── css/
 │   └── style.css       # estilos próprios: tokens de cor, temas, layout e componentes
@@ -77,18 +77,18 @@ Os scripts são carregados como scripts clássicos (sem `type="module"`), justam
 
 ## Quais rotas cada ação chama
 
-| Ação na tela | Requisição |
-|---|---|
-| Abrir a página | `GET /ping` |
-| Criar conta | `POST /auth/register` + `POST /auth/login` |
-| Entrar | `POST /auth/login` |
-| Carregar o quadro / filtro "Todas" | `GET /tasks` |
-| Filtro "Pendentes" / "Concluídas" | `GET /tasks?done=false` / `GET /tasks?done=true` |
-| Adicionar tarefa | `POST /tasks` |
-| Botão "Detalhes" no card | `GET /tasks/<id>` |
-| Salvar alterações no modal | `PUT /tasks/<id>` |
-| Caixa de seleção do card | `PATCH /tasks/<id>` |
-| Botão "Excluir" | `DELETE /tasks/<id>` |
+| Ação na tela                       | Requisição                                       |
+| ---------------------------------- | ------------------------------------------------ |
+| Abrir a página                     | `GET /ping`                                      |
+| Criar conta                        | `POST /auth/register` + `POST /auth/login`       |
+| Entrar                             | `POST /auth/login`                               |
+| Carregar o quadro / filtro "Todas" | `GET /tasks`                                     |
+| Filtro "Pendentes" / "Concluídas"  | `GET /tasks?done=false` / `GET /tasks?done=true` |
+| Adicionar tarefa                   | `POST /tasks`                                    |
+| Botão "Detalhes" no card           | `GET /tasks/<id>`                                |
+| Salvar alterações no modal         | `PUT /tasks/<id>`                                |
+| Caixa de seleção do card           | `PATCH /tasks/<id>`                              |
+| Botão "Excluir"                    | `DELETE /tasks/<id>`                             |
 
 Todas as chamadas aparecem no painel lateral **Chamadas à API** enquanto você usa o sistema.
 

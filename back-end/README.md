@@ -1,4 +1,4 @@
-# To-Do API — back-end do MVP
+# Foco API | back-end do MVP
 
 API REST de gerenciamento de tarefas construída em **Python + Flask**, com banco **SQLite**, autenticação por **JWT** e documentação **Swagger (OpenAPI)**.
 
@@ -23,7 +23,7 @@ Cada usuário se cadastra, faz login e passa a gerenciar apenas as próprias tar
 
 ```bash
 git clone <url-deste-repositorio>
-cd todo-api
+cd back-end
 
 # ambiente virtual
 python -m venv .venv
@@ -53,36 +53,36 @@ python app.py
 
 A API sobe em `http://127.0.0.1:5000`. O banco `instance/todo.db` é criado automaticamente na primeira execução.
 
-| Endereço | O que é |
-|---|---|
-| http://127.0.0.1:5000/apidocs | Swagger UI (documentação interativa) |
-| http://127.0.0.1:5000/apispec_1.json | Contrato OpenAPI em JSON |
-| http://127.0.0.1:5000/ping | Verificação rápida de que a API está no ar |
+| Endereço                             | O que é                                    |
+| ------------------------------------ | ------------------------------------------ |
+| http://127.0.0.1:5000/apidocs        | Swagger UI (documentação interativa)       |
+| http://127.0.0.1:5000/apispec_1.json | Contrato OpenAPI em JSON                   |
+| http://127.0.0.1:5000/ping           | Verificação rápida de que a API está no ar |
 
 ## Dependências
 
-| Pacote | Para quê |
-|---|---|
-| Flask | Framework web e roteamento |
-| Flask-SQLAlchemy | ORM e acesso ao SQLite |
-| Flask-JWT-Extended | Geração e validação dos tokens JWT |
-| Flasgger | Geração do Swagger/OpenAPI a partir do código |
-| Flask-Cors | Libera o acesso do front-end aberto direto do navegador |
-| python-dotenv | Carrega as variáveis do arquivo `.env` |
+| Pacote             | Para quê                                                |
+| ------------------ | ------------------------------------------------------- |
+| Flask              | Framework web e roteamento                              |
+| Flask-SQLAlchemy   | ORM e acesso ao SQLite                                  |
+| Flask-JWT-Extended | Geração e validação dos tokens JWT                      |
+| Flasgger           | Geração do Swagger/OpenAPI a partir do código           |
+| Flask-Cors         | Libera o acesso do front-end aberto direto do navegador |
+| python-dotenv      | Carrega as variáveis do arquivo `.env`                  |
 
 ## Rotas
 
-| Método | Rota | Autenticada | Descrição |
-|---|---|---|---|
-| GET | `/ping` | não | Verifica se a API está no ar |
-| POST | `/auth/register` | não | Cria um usuário |
-| POST | `/auth/login` | não | Autentica e devolve o `access_token` |
-| GET | `/tasks` | sim | Lista as tarefas do usuário (filtro opcional `?done=true`) |
-| POST | `/tasks` | sim | Cria uma tarefa |
-| GET | `/tasks/<id>` | sim | Busca uma tarefa pelo id |
-| PUT | `/tasks/<id>` | sim | Substitui a tarefa inteira |
-| PATCH | `/tasks/<id>` | sim | Atualiza apenas os campos enviados |
-| DELETE | `/tasks/<id>` | sim | Remove a tarefa |
+| Método | Rota             | Autenticada | Descrição                                                  |
+| ------ | ---------------- | ----------- | ---------------------------------------------------------- |
+| GET    | `/ping`          | não         | Verifica se a API está no ar                               |
+| POST   | `/auth/register` | não         | Cria um usuário                                            |
+| POST   | `/auth/login`    | não         | Autentica e devolve o `access_token`                       |
+| GET    | `/tasks`         | sim         | Lista as tarefas do usuário (filtro opcional `?done=true`) |
+| POST   | `/tasks`         | sim         | Cria uma tarefa                                            |
+| GET    | `/tasks/<id>`    | sim         | Busca uma tarefa pelo id                                   |
+| PUT    | `/tasks/<id>`    | sim         | Substitui a tarefa inteira                                 |
+| PATCH  | `/tasks/<id>`    | sim         | Atualiza apenas os campos enviados                         |
+| DELETE | `/tasks/<id>`    | sim         | Remove a tarefa                                            |
 
 Nas rotas autenticadas, envie o header:
 
@@ -129,7 +129,7 @@ A relação é 1:N (um usuário tem várias tarefas), com `cascade="all, delete-
 ## Estrutura do projeto
 
 ```
-todo-api/
+back-end/
 ├── app.py             # aplicação: configuração, modelos e rotas
 ├── api.http           # requisições prontas (extensão REST Client do VS Code)
 ├── requirements.txt   # dependências
@@ -141,6 +141,6 @@ todo-api/
 ## Testando
 
 - **Swagger UI**: acesse `/apidocs`, use `POST /auth/login`, copie o `access_token`, clique em **Authorize** no topo, cole `Bearer <token>` e teste as rotas protegidas.
-- **REST Client (VS Code)**: abra `api.http` e clique em *Send Request*. O token do login é reaproveitado automaticamente nas demais chamadas.
+- **REST Client (VS Code)**: abra `api.http` e clique em _Send Request_. O token do login é reaproveitado automaticamente nas demais chamadas.
 
 > Se você alterar o modelo de dados, apague `instance/todo.db` antes de rodar de novo: o `create_all()` cria as tabelas que faltam, mas não altera tabela existente.
